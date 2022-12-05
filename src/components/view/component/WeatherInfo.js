@@ -13,7 +13,6 @@ import _10d from '../../../img/icon/10d.gif';
 import _11d from '../../../img/icon/11d.gif';
 import _13d from '../../../img/icon/13d.gif';
 import _50d from '../../../img/icon/50d.png';
-const inc = 0;
 
 class WeatherInfo extends React.Component {
     constructor(props) {

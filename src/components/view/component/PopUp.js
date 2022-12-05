@@ -19,7 +19,6 @@ class PopUp extends React.Component {
         this.setState({
             value: e.target.value
         });
-        console.log(e.target.value);
     }
     onSubmit(e) {
         e.preventDefault();

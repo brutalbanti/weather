@@ -47,8 +47,8 @@ const WeatherView = memo((props) => {
             }
         } else if (city !== '') {
             const apiKey = 'e7b7486aa655f5669afe76376c83a8f3';
-            const cityApi = 'http://api.openweathermap.org/geo/1.0/direct?q=' + city + '&appid=' + apiKey;
-            axios.get(cityApi, )
+            const cityApi = 'https://api.openweathermap.org/geo/1.0/direct?q=' + city + '&appid=' + apiKey;
+            axios.get(cityApi)
                 .then(response => {
                     const lat = response.data[0].lat;
                     const lon = response.data[0].lon;
