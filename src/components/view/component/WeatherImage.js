@@ -17,7 +17,11 @@ class WeatherImage extends React.Component {
                                 :
                                 <div className="weather-image__location">
                                     <img src={locImage} alt="" />
-                                    <span>{city}, {country}</span> 
+                                    {country !== '' ?
+                                        <span>{city}, {country}</span>
+                                        :
+                                        <span>{city}</span>
+                                    }
                                 </div>
                             }
                         </div>

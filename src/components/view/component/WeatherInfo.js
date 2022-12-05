@@ -42,7 +42,6 @@ class WeatherInfo extends React.Component {
         const imageTwo = [image[1]].toString();
         const imageThree = [image[2]].toString();
         const imageFour = [image[3]].toString();
-        console.log(imageFour)
         if (imageOne === '01d' || imageOne === '01n') {
             this.setState({ imageOne: _01d });
         } else if (imageOne === '02d' || imageOne === '02n') {
