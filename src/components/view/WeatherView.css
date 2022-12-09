@@ -1,5 +1,5 @@
 .weather-view__body {
-    padding: 60px 0px;
+    padding: 110px 0px;
 }
 
 .weather-content {
@@ -128,8 +128,35 @@
     border: 0;
 }
 
+
+.weather-details {
+    display: flex;
+    justify-content: right;
+    transition: all 0.3s ease 0s;
+}
+
+.weather-details a {
+    color: white;
+    text-decoration: none;
+    font-style: italic;
+    display: flex;
+    align-items: center;
+}
+
+.weather-details:hover {
+    transform: translateX(5px);
+}
+
+.weather-details a i {
+    width: 6px;
+    height: 6px;
+    border-top: 2px solid white;
+    border-right: 2px solid white;
+    transform: rotate(45deg);
+}
+
 .weather-info__today-weather {
-    background: #a8adff;
+    background: #A8ADC8;
     box-shadow: 1px 2px 4px #222831;
     border-radius: 10px;
     display: flex;
@@ -137,6 +164,10 @@
     gap: 15px;
     padding: 10px 0px;
     width: 33%;
+}
+
+.weather-info__today-weather.active {
+    background: #a8adff;
 }
 
 .today-weather__icon {
@@ -207,6 +238,10 @@
 @media (max-width: 767.98px) {
     .weather-content {
         width: auto;
+    }
+
+    .weather-view__body {
+        padding: 60px 0px;
     }
 
     .content-weather-image {

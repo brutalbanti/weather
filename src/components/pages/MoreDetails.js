@@ -1,45 +1,52 @@
+import axios from "axios";
 import React from "react";
-import preloader from '../../../img/Airplane.gif';
-import { getWeather } from "../../api/getWeather";
-import { GetLocation } from "../../pages/GetLocation";
-import PopUp from "./PopUp";
-
-
-import preloaderImage from '../../../img/preloader-image.gif';
-import _01d from '../../../img/icon/01d.gif';
-import _02d from '../../../img/icon/02d.gif';
-import _03d from '../../../img/icon/03d.gif';
-import _09d from '../../../img/icon/09d.gif';
-import _10d from '../../../img/icon/10d.gif';
-import _11d from '../../../img/icon/11d.gif';
-import _13d from '../../../img/icon/13d.gif';
-import _50d from '../../../img/icon/50d.png';
+import { getWeather } from "../api/getWeather";
+import './MoreDetails.css';
 import { Link } from "react-router-dom";
 
-const daysAbbreviated = ["НД", "ПН", "ВТ", "СР", "ЧТ", "ПТ", "СБ"];
-const nowDay = new Date().getDay();
+import preloaderImage from '../../img/preloader-image.gif';
+import locImage from '../../img/location.png';
+import _01d from '../../img/icon/01d.gif';
+import _02d from '../../img/icon/02d.gif';
+import _03d from '../../img/icon/03d.gif';
+import _09d from '../../img/icon/09d.gif';
+import _10d from '../../img/icon/10d.gif';
+import _11d from '../../img/icon/11d.gif';
+import _13d from '../../img/icon/13d.gif';
+import _50d from '../../img/icon/50d.png';
 
-class WeatherInfo extends React.Component {
+import preloader from '../../img/Airplane.gif';
+
+
+const days = ["Неділя", "Понеділок", "Вівторок", "Середа", "Четверг", "П'ятниця", "Субота"];
+const month = ["Січ", "Лют", "Бер", "Квіт", "Трав", "Черв", "Лип", "Серп", "Вер", "Жовт", "Лист", "Груд"];
+const now = new Date();
+const dayNow = days[now.getDay()];
+const monthNow = month[now.getMonth()];
+const dayNumNow = now.getDate();
+const yearNow = now.getFullYear();
+const nowFullDate = `${dayNumNow} ${monthNow} ${yearNow}`;
+
+class MoreDetails extends React.Component {
     constructor(props) {
         super(props);
         this.state = {
-            popup: false,
-            value: '',
-            submit: '',
+            nextHour: [],
             imageOne: null,
             imageTwo: null,
             imageThree: null,
             imageFour: null,
-            class: ''
+            city: '',
+            country: '',
+            cloud: '',
+            humidity: '',
+            wind: '',
+            descriptions: ''
         }
-        this.popupFun = this.popupFun.bind(this);
-        this.onChange = this.onChange.bind(this);
-        this.onSubmit = this.onSubmit.bind(this);
-        this.madeMount = this.madeMount.bind(this);
     }
 
     madeMount() {
-        const image = this.props.weatherFourDay.map(img => {
+        const image = this.state.nextHour.map(img => {
             return [img.weather[0].icon]
         })
         const imageOne = [image[0]].toString();
@@ -125,52 +132,64 @@ class WeatherInfo extends React.Component {
         } else if (imageFour === '50d' || imageFour === '50n') {
             this.setState({ imageFour: _03d });
         }
-
-        if (localStorage.getItem('city')) {
-            localStorage.removeItem('city');
-            localStorage.setItem('city', this.props.city);
-            localStorage.removeItem('country');
-            localStorage.setItem('country', this.props.country);
-            localStorage.removeItem('cityDetail');
-            localStorage.setItem('cityDetail', localStorage.getItem('city'));
-        } else {
-            localStorage.setItem('city', this.props.city);
-            localStorage.setItem('country', this.props.country);
-            localStorage.removeItem('cityDetail');
-            localStorage.setItem('cityDetail', localStorage.getItem('city'));
-        }
     }
 
-    popupFun() {
-        this.setState({
-            popup: true
-        })
-    }
+    componentDidMount() {
+        const city = localStorage.getItem('cityDetail');
+        const country = localStorage.getItem('country');
 
-    onChange(e) {
         this.setState({
-            value: e.target.value
+            city: city,
+            country: country
         })
-    }
+        const apiKey = 'e7b7486aa655f5669afe76376c83a8f3';
+        const cityApi = 'https://api.openweathermap.org/geo/1.0/direct?q=' + this.props.cityLocal + '&appid=' + apiKey;
 
-    onSubmit(e) {
-        e.preventDefault();
-        this.setState({
-            submit: this.state.value,
-            popup: false
-        })
+        return axios.get(cityApi)
+            .then(response => {
+                const lat = response.data[0].lat;
+                const lon = response.data[0].lon;
+                getWeather(lat, lon)
+                    .then(data => {
+                        this.setState({
+                            nextHour: [data.data.list[0], data.data.list[1], data.data.list[2], data.data.list[3]],
+                            cloud: data.data.list[0].clouds.all,
+                            humidity: data.data.list[0].main.humidity,
+                            wind: data.data.list[0].wind.speed,
+                            descriptions: data.data.list[0].weather[0].description
+                        })
+                    })
+            });
+
     }
 
     render() {
         if (this.state.imageOne === null) {
             this.madeMount();
         }
-        const { temperature, wind, humidity, cloud, locImage } = this.props;
+        const { nextHour, cloud, humidity, wind, descriptions } = this.state;
         const doneIconWeather = [this.state.imageOne, this.state.imageTwo, this.state.imageThree, this.state.imageFour];
         return (
-            <>
-                <div className="weather-content__info weather-info">
-                    <div className="weather-info__weather">
+            <div className="container-details">
+                <div className="details__information">
+                    <div className="info-left">
+                        <div className="weather-image__day">{dayNow}</div>
+                        <div className="weather-image__date">{nowFullDate}</div>
+                        {this.state.city === ''
+                            ?
+                            <div className="weather-image__location"></div>
+                            :
+                            <div className="weather-image__location">
+                                <img src={locImage} alt="" />
+                                {this.state.country !== '' ?
+                                    <span>{this.state.city}, {this.state.country}</span>
+                                    :
+                                    <span>{this.state.city}</span>
+                                }
+                            </div>
+                        }
+                    </div>
+                    <div className="info-right">
                         {cloud === '' ?
                             <img src={preloader} alt="" className="preloader" /> :
                             <div className="weather-info__precipitation beetwen gap-72 text-white">ХМАРНІСТЬ <span>{cloud}%</span></div>
@@ -183,49 +202,33 @@ class WeatherInfo extends React.Component {
                             <img src={preloader} alt="" className="preloader" /> :
                             <div className="weather-info__wind beetwen gap-72 text-white">ВІТЕР <span>{wind} м/сек</span></div>
                         }
-                    </div>
-                    {this.state.imageOne !== null &&
-                        <div className="weather-details">
-                            <Link
-                                to='/details'
-                            >Дивитися детальніше <i></i></Link>
-                        </div>
-                    }
-                    <div className="weather-full">
-                        {this.state.imageOne === null &&
-                            <img src={preloaderImage} alt="" />
+                        {descriptions === '' ?
+                            <img src={preloader} alt="" className="preloader" /> :
+                            <div className="weather-info__wind beetwen gap-72 text-white">НАРАЗІ:<span>{descriptions}</span></div>
                         }
-                        {this.props.weatherFourDay.map((weather, index) => {
-
-                            return (
-                                <div className={new Date(weather.dt_txt).getDay() === nowDay ? 'weather-info__today-weather active' : 'weather-info__today-weather'} key={index}>
-                                    <div className="today-weather__icon"><img src={doneIconWeather[index]} alt="" /></div>
-                                    <div className="today-weather__day">{daysAbbreviated[new Date(weather.dt_txt).getDay()]}</div>
-                                    {temperature === '' ?
-                                        <div className="today-weather__degrees" style={{ fontSize: '14px', fontWeight: '500' }}>loaded..</div> :
-                                        <div className="today-weather__degrees">{Math.floor(weather.main.temp - 273.15)}&deg;C</div>}
-                                </div>
-                            )
-                        })}
-                    </div>
-                    <div className="weather-info__button">
-                        <a href='' className="change-location__btn reload">
-                            Оновити дані
-                        </a>
-                        <button className="change-location__btn" onClick={this.popupFun}>
-                            <img src={locImage} alt="" />
-                            <span>Змінити місцезнаходження</span>
-                        </button>
                     </div>
                 </div>
-                {this.state.popup === true ?
-                    <PopUp />
-                    :
-                    null
-                }
-            </>
+                <div className="details__weather">
+                    {this.state.imageOne === null &&
+                        <img src={preloaderImage} alt="" />
+                    }
+                    {nextHour.map((weather, index) => {
+                        return (
+                            <div className='weather-info__hours-weather' key={index}>
+                                <div className="today-weather__icon"><img src={doneIconWeather[index]} alt="" /></div>
+                                <div className="today-weather__day">{new Date(weather.dt_txt).getHours()}:00</div>
+                                <div className="today-weather__degrees">{Math.floor(weather.main.temp - 273.15)}&deg;C</div>
+                            </div>
+                        )
+                    })}
+                </div>
+                <div className="details__back">
+                    <Link className="back-btn" to='/'>Повернутись назад</Link>
+                </div>
+            </div >
+
         )
     }
 }
 
-export default WeatherInfo;
+export default MoreDetails;

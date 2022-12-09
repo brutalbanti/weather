@@ -3,11 +3,9 @@ import WeatherView from "../view/WeatherView";
 import '../view/component/popup.css';
 import PopUp from "../view/component/PopUp";
 
-const daysAbbreviated = ["НД", "ПН", "ВТ", "СР", "ЧТ", "ПТ", "СБ"];
 const days = ["Неділя", "Понеділок", "Вівторок", "Середа", "Четверг", "П'ятниця", "Субота"];
 const month = ["Січ", "Лют", "Бер", "Квіт", "Трав", "Черв", "Лип", "Серп", "Вер", "Жовт", "Лист", "Груд"];
 const now = new Date();
-const dayAbbrevNow = daysAbbreviated[now.getDay()];
 const dayNow = days[now.getDay()];
 const monthNow = month[now.getMonth()];
 const dayNumNow = now.getDate();
@@ -31,8 +29,10 @@ export const GetLocation = (props) => {
         const longitude = position.coords.longitude;
         setLocationLatitude(latitude);
         setLocationLongitude(longitude);
-        if(latitude !== '' && longitude !== '') {
+        if (latitude !== '' && longitude !== '') {
             if (localStorage.getItem('city')) {
+                localStorage.removeItem('cityDetail');
+                localStorage.setItem('cityDetail', localStorage.getItem('city'));
                 localStorage.removeItem('city');
             }
         }
@@ -74,7 +74,6 @@ export const GetLocation = (props) => {
                 <WeatherView
                     latitude={locationLatitude}
                     longitude={locationLongitude}
-                    dayAbbrevNow={dayAbbrevNow}
                     dayNow={dayNow}
                     nowFullDate={nowFullDate}
                     city={props.cityLocal}
@@ -85,7 +84,6 @@ export const GetLocation = (props) => {
                 < WeatherView
                     latitude={locationLatitude}
                     longitude={locationLongitude}
-                    dayAbbrevNow={dayAbbrevNow}
                     dayNow={dayNow}
                     nowFullDate={nowFullDate}
                     city={props.cityLocal}

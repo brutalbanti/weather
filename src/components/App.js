@@ -1,22 +1,26 @@
 import React from "react";
 import { BrowserRouter as Router, Route, Switch } from "react-router-dom";
 import { GetLocation } from "./pages/GetLocation";
+import MoreDetails from "./pages/MoreDetails";
 
 class App extends React.Component {
     render() {
         const city = localStorage.getItem('city');
         return (
-            <div className="app-container __container">
-                <React.StrictMode>
-                    <Router>
+            <React.StrictMode>
+                <Router>
+                    <div className="app-container __container">
                         <Switch>
-                            <Route path="/">
-                                <GetLocation cityLocal={city}/>
+                            <Route exact path="/">
+                                <GetLocation cityLocal={city} />
+                            </Route>
+                            <Route exact path="/details">
+                                <MoreDetails cityLocal={city} />
                             </Route>
                         </Switch>
-                    </Router>
-                </React.StrictMode>
-            </div>
+                    </div>
+                </Router>
+            </React.StrictMode>
         )
     }
 }

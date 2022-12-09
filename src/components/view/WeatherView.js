@@ -28,9 +28,12 @@ const WeatherView = memo((props) => {
     const [imageWeather, setImageWeather] = useState();
     const [country, setCountry] = useState('');
     const [nextDaysWeather, setNextDaysWeather] = useState([]);
-    let cancel;
+
     useEffect(() => {
-        setCity(props.city);
+        if (props.city !== null) {
+            setCity(props.city);
+        }
+
         if (props.latitude !== undefined && props.longitude !== undefined) {
             if ((humidity || wind || cloud || temperature) === '') {
                 getWeather(props.latitude, props.longitude)
@@ -42,7 +45,8 @@ const WeatherView = memo((props) => {
                         setDescription(data.data.list[0].weather[0].description);
                         setImageWeather(data.data.list[0].weather[0].icon);
                         setCountry(data.data.city.country);
-                        setNextDaysWeather([data.data.list[0], data.data.list[1], data.data.list[2], data.data.list[3]]);
+                        setCity(data.data.city.name)
+                        setNextDaysWeather([data.data.list[0], data.data.list[7], data.data.list[15], data.data.list[23]]);
                     })
             }
         } else if (city !== '') {
@@ -61,12 +65,11 @@ const WeatherView = memo((props) => {
                             setDescription(data.data.list[0].weather[0].description);
                             setImageWeather(data.data.list[0].weather[0].icon);
                             setCountry(data.data.city.country);
-                            setNextDaysWeather([data.data.list[0], data.data.list[1], data.data.list[2], data.data.list[3]]);
+                            setNextDaysWeather([data.data.list[0], data.data.list[7], data.data.list[15], data.data.list[23]]);
                         })
                 });
         }
     }, [city, props.latitude, props.longitude])
-
 
     if (imageWeather === '01d') {
         setImageWeather(_01d);
@@ -122,6 +125,8 @@ const WeatherView = memo((props) => {
                 <WeatherInfo
                     cloud={cloud}
                     wind={wind}
+                    city={city}
+                    country={country}
                     humidity={humidity}
                     locImage={locImage}
                     temperature={temperature}
